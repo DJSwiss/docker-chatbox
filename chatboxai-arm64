@@ -1,0 +1,3 @@
+#\!/bin/bash
+echo "ChatBoxAI Mock - ARM64"
+sleep infinity
