@@ -42,16 +42,23 @@ RUN apt-get update && apt-get install -y \
 
 RUN groupadd -r chatboxai && useradd -r -g chatboxai -u 1001 chatboxai
 
+# Install Node.js for MCP servers
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
 WORKDIR /opt/chatboxai
 
 COPY --chown=chatboxai:chatboxai chatboxai-* ./
+COPY --chown=chatboxai:chatboxai mcp-config.json ./
+COPY --chown=chatboxai:chatboxai start-mcp.sh ./
+COPY --chown=chatboxai:chatboxai entrypoint.sh ./
 
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
         mv chatboxai-x86_64 chatboxai; \
     elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
         mv chatboxai-arm64 chatboxai; \
     fi && \
-    chmod +x chatboxai
+    chmod +x chatboxai start-mcp.sh entrypoint.sh
 
 ENV WAYLAND_DISPLAY=wayland-0
 ENV XDG_RUNTIME_DIR=/tmp
@@ -65,4 +72,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
-CMD ["./chatboxai"]
+CMD ["./entrypoint.sh"]

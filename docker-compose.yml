@@ -21,6 +21,10 @@ services:
       - XDG_RUNTIME_DIR=/tmp
       - GDK_BACKEND=wayland
       - QT_QPA_PLATFORM=wayland
+      # MCP Server Environment
+      - BRAVE_API_KEY=${BRAVE_API_KEY:-}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - MCP_ENABLED=true
     security_opt:
       - no-new-privileges:true
     cap_drop:
